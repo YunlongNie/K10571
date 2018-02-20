@@ -1,3 +1,5 @@
+library(dplyr)
+library(ggplot2)
 #  simulation one 
 # all the g's are lines 
 
