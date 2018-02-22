@@ -13,6 +13,7 @@ xlimt = 10
 data_km = expand.grid(k=1:klevel,m=1:mlevel)
 
 spline_basis=create.bspline.basis(rangeval=c(0,xlimt),nbasis=5,norder=4)
+set.seed(101)
 E = inprod(spline_basis,spline_basis)
 coef_list = lapply(1:mlevel, function(x){
 lapply(1:klevel, function(y){
@@ -35,7 +36,7 @@ library(ggplot2)
 limd = mapply(flim,m=data_km$m, k=data_km$k,SIMPLIFY=FALSE)%>%do.call(rbind.data.frame,.)
 
 ggplot(limd)+geom_line(aes(x=t,y=value,color=factor(k)))+facet_wrap(~m, scales="free")
-
+# ggsave(filename = "/Users/joha/Dropbox/Yunlong/Research_ideas/sparse_function_on_scalar_nonlinear/K10571/some_figures/simulation_nonlinear_fig1_mfunctions.png")
 ## set the true value for k and t 
 ttrue = 5
 ktrue = 1
@@ -61,7 +62,7 @@ loss = function(y,t,k){
 
 ##  losst give the mean square differences or errors
 losst = function(t,k) {
-	mean((loss(yobs,t,k))^2)
+	mean((loss(yobs,t,k)))
 }
 
 ## we can evaluate the loss function surface
@@ -79,21 +80,22 @@ ggplot(settings,aes(x=t,group=factor(k),color=factor(k),y=res))+geom_line()+geom
 #  given a different value of t 
 ttrue = 6
 ktrue = 2
-yobs = fytrue(ttrue,ktrue)+rnorm(length(mlevel))
+sigma_noise = 0
+yobs = fytrue(ttrue,ktrue)+rnorm(length(mlevel),sd=sigma_noise)
 res = mapply(t=settings$t,k=settings$k, losst)
 settings$res = res
 p0 = ggplot(settings,aes(x=t,group=factor(k),color=factor(k),y=res))+geom_line()+geom_vline(xintercept = ttrue,col=4)+theme_bw()+theme(legend.position = "none")+ggtitle('the loss function')
-ggplot(settings%>%dplyr::filter(t<2),aes(x=t,group=factor(k),color=factor(k),y=res))
+
 
 #MCMC
 ## set the initial vaue for the mcmc 
 t0=2;k0=2;
 meantk0 = fytrue(t0,k0)
-l0=sum(dnorm(yobs,mean=meantk0,sd=1,log=T))
+l0=sum(dnorm(yobs,mean=meantk0,sd=0.01,log=T))
 t_save = c()
 k_save = c()
 meantk0 = fytrue(t0,k0)
-for (i in 1:1e4){
+for (i in 1:1e3){
 t1= runif(1,0,xlimt);k1= sample(1:3,1,replace=F)
 meantk1 = fytrue(t1,k1)
 l1=sum(dnorm(yobs,mean=meantk1,sd=1,log=T))
@@ -103,12 +105,17 @@ t_save = c(t_save,t0)
 k_save = c(k_save,k0)
 }
 
-tpost = tail(t_save,1e3)
-kpost = tail(k_save,1e3)
+tpost = tail(t_save,1e2)
+kpost = tail(k_save,1e2)
+
 p1=  data.frame(t=tpost,k=kpost)%>%ggplot(aes(x=tpost))+stat_density(alpha=0.3, aes(fill=factor(k)))+facet_wrap(~k)+geom_vline(xintercept = ttrue,col=4)+ggtitle(sprintf('Posterior density for t conditional on k; \ntrue t: %s; true k: %s', ttrue, ktrue))+theme_bw()
 p2 = data.frame(t=tpost,k=kpost)%>%ggplot(aes(x=tpost))+stat_density(alpha=0.3)+ggtitle('Posterior density for t accross \nall k')+geom_vline(xintercept = ttrue,col=4)+theme_bw()
 p3 = data.frame(t=tpost,k=kpost)%>%ggplot(aes(x=factor(kpost), fill=factor(kpost)))+geom_histogram(stat="count")+ggtitle('Posterior histogram for k')+theme_bw()+theme(legend.position = "none")
 library(gridExtra)
+
+# png("/Users/joha/Dropbox/Yunlong/Research_ideas/sparse_function_on_scalar_nonlinear/K10571/some_figures/simulation_nonlinear_fig2_MCMC_demo.png",height=600,width=1000)
+
 grid.arrange(p1,grid.arrange(p2,p3,p0,nrow=1),nrow=2)
 
+# dev.off()
 

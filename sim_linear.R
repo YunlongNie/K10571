@@ -48,7 +48,7 @@
 
 	##  losst give the mean square differences or errors
 	losst = function(t,k) {
-		mean((loss(yobs,t,k))^2)
+		mean((loss(yobs,t,k)))
 	}
 
 	## we can evaluate the loss function surface
@@ -63,7 +63,7 @@
 	#  given a different value of t 
 	ttrue = 0.1
 	ktrue = 1
-	ytrue = fytrue(ttrue,ktrue)+rnorm(length(mlevel))
+	yobs  = fytrue(ttrue,ktrue)+rnorm(length(mlevel))
 	res = mapply(t=settings$t,k=settings$k, losst)
 	settings$res = res
 	ggplot(settings,aes(x=t,group=factor(k),color=factor(k),y=res))+geom_line()
