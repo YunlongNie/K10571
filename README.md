@@ -8,4 +8,4 @@ Ben: The noise level seem to be too large (sigma=1) for the nonlinear example (t
 
 Luyao: I totally agree. -Ben
 
-Ten figures are added into the folder called figures. Each figure plots the g function fitted using the real data through linear interpolations. ***I noticed that the scales of those 10 g functions very a lot.*** Therefore, the sigmas we use to evaluate the likelihood for each g should be different. Otherwise, one or two of all ten g will dominate the likelihood function. 
+Ten figures are added into the folder --figures--. Each figure plots the g function fitted using the real data through linear interpolations. ***I noticed that the scales of those 10 g functions very a lot.*** Therefore, the sigmas we use to evaluate the likelihood for each g should be different. Otherwise, one or two of all ten g will dominate the likelihood function. 
