@@ -11,4 +11,6 @@ Luyao: I totally agree. -Ben
 Ten figures are added into the folder *figures*. Each figure plots the g function fitted using the real data through linear interpolations. ***I noticed that the scales of those 10 g functions very a lot.*** Therefore, the sigmas we use to evaluate the likelihood for each g should be different. Otherwise, one or two of all ten g will dominate the likelihood function. 
 
 
-Thanks Ben! Yeah, That's True. -Faezeh
+Thanks Ben! Yeah, That's True.
+May you add your codes in the linear interploation part? 
+-Faezeh
